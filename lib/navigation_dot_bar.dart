@@ -1,12 +1,12 @@
-library navigation_dot_bar;
-
 import 'package:flutter/material.dart';
 
 class BottomNavigationDotBar extends StatefulWidget{
 
   final List<BottomNavigationDotBarItem> items;
+  final Color activeColor;
+  final Color color;
 
-  const BottomNavigationDotBar({@required this.items, Key key}): super(key: key);
+  const BottomNavigationDotBar({@required this.items, this.activeColor, this.color, Key key}): super(key: key);
 
   @override
   State<StatefulWidget> createState() => _BottomNavigationDotBarState();
@@ -18,6 +18,7 @@ class _BottomNavigationDotBarState extends State<BottomNavigationDotBar>{
   GlobalKey _keyBottomBar = GlobalKey();
   double _numPositionBase, _numDifferenceBase, _positionLeftIndicatorDot;
   int _indexPageSelected = 0;
+  Color _color, _activeColor;
 
   @override
   void initState() {
@@ -26,6 +27,8 @@ class _BottomNavigationDotBarState extends State<BottomNavigationDotBar>{
   }
 
   _afterLayout(_) {
+    _color = widget.color ?? Colors.black45;
+    _activeColor = widget.activeColor ?? Theme.of(context).primaryColor;
     final sizeBottomBar = (_keyBottomBar.currentContext.findRenderObject() as RenderBox).size;
     _numPositionBase = ((sizeBottomBar.width / widget.items.length));
     _numDifferenceBase = (_numPositionBase - (_numPositionBase / 2) + 2);
@@ -51,7 +54,7 @@ class _BottomNavigationDotBarState extends State<BottomNavigationDotBar>{
                 ),
               ),
               AnimatedPositioned(
-                  child: CircleAvatar(radius: 2.5, backgroundColor: Colors.black87),
+                  child: CircleAvatar(radius: 2.5, backgroundColor: _activeColor),
                   duration: Duration(milliseconds: 400),
                   curve: Curves.fastOutSlowIn,
                   left: _positionLeftIndicatorDot,
@@ -66,7 +69,7 @@ class _BottomNavigationDotBarState extends State<BottomNavigationDotBar>{
   List<_NavigationIconButton> _createNavigationIconButtonList(Map<int, BottomNavigationDotBarItem> mapItem){
     List<_NavigationIconButton> children = List<_NavigationIconButton>();
     mapItem.forEach((index, item) =>
-        children.add(_NavigationIconButton(item.icon, (index == _indexPageSelected) ? Colors.black87 : Colors.black45,item.onTap,() { _changeOptionBottomBar(index); }))
+        children.add(_NavigationIconButton(item.icon, (index == _indexPageSelected) ? _activeColor : _color,item.onTap,() { _changeOptionBottomBar(index); }))
     );
     return children;
   }
